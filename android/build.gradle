@@ -1,0 +1,31 @@
+plugins {
+  id 'com.android.library'
+  id 'org.jetbrains.kotlin.android'
+  id 'expo-module-gradle-plugin'
+}
+
+group = 'om.rapide.tracking'
+version = '0.1.0'
+
+// Tracelet SDK is published to Maven Central as `com.ikolvi:tracelet-sdk`.
+// Pin to a specific minor; bump deliberately after testing.
+def TRACELET_SDK_VERSION = '1.1.4'
+
+android {
+  namespace 'om.rapide.tracking'
+  defaultConfig {
+    versionCode 1
+    versionName '0.1.0'
+    minSdkVersion 26
+  }
+  lintOptions {
+    abortOnError false
+  }
+  kotlinOptions {
+    jvmTarget = '17'
+  }
+}
+
+dependencies {
+  implementation "com.ikolvi:tracelet-sdk:${TRACELET_SDK_VERSION}"
+}

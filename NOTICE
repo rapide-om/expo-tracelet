@@ -1,0 +1,14 @@
+expo-rapide-tracking
+Copyright 2026 Rapide
+
+This product depends on (but does not redistribute the source of) the
+following Apache-licensed software:
+
+  Tracelet
+  Copyright 2025 Ikolvi
+  Source: https://github.com/Ikolvi/Tracelet
+  Distributed via Maven Central (com.ikolvi:tracelet-sdk) and
+  CocoaPods (TraceletSDK).
+
+Both projects are licensed under the Apache License, Version 2.0:
+http://www.apache.org/licenses/LICENSE-2.0

@@ -1,0 +1,9 @@
+{
+  "platforms": ["apple", "android", "web"],
+  "apple": {
+    "modules": ["ExpoRapideTrackingModule"]
+  },
+  "android": {
+    "modules": ["om.rapide.tracking.ExpoRapideTrackingModule"]
+  }
+}
