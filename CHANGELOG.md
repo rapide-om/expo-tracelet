@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-05-08
+
+### Fixed
+
+- **Android Kotlin metadata mismatch**: Tracelet 1.1.x ships `kotlin-stdlib:2.3.x` metadata, but Expo SDK 55 / RN 0.83 use Kotlin 2.1. Without intervention, every consuming app failed to build with `Module was compiled with an incompatible version of Kotlin. The binary version of its metadata is 2.3.0, expected version is 2.1.0.` The Android side of the config plugin now patches `android/build.gradle` (via `withProjectBuildGradle`) to inject `-Xskip-metadata-version-check` into every Kotlin compile task. Idempotent — the patch is fingerprinted and skipped if already present.
+- Documented the consumer-side `expo-build-properties.android.minSdkVersion: 26` requirement (Tracelet's AAR declares `minSdk=26`, will fail manifest merging on lower).
+
 ## [0.1.0] - 2026-05-08
 
 ### Added
