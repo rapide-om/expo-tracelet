@@ -18,4 +18,14 @@ export type ExpoTraceletPluginProps = {
      * Tracelet's activity-aware tracking). Defaults to a generic message.
      */
     motionUsageDescription?: string;
+
+    /**
+     * iOS-only string for the `TraceletFullAccuracy` purpose key in
+     * `NSLocationTemporaryUsageDescriptionDictionary`. Required for
+     * Tracelet's `CLServiceSession` (iOS 18+) and
+     * `requestTemporaryFullAccuracyAuthorization` calls — without this
+     * key, iOS silently rejects the session and suppresses location
+     * delivery entirely.
+     */
+    fullAccuracyUsageDescription?: string;
 };

@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-05-09
+
+### Fixed
+
+- **iOS 18+ silent location-delivery suppression.** Tracelet's iOS SDK creates a `CLServiceSession(authorization: .always, fullAccuracyPurposeKey: "TraceletFullAccuracy")` and calls `CLLocationManager.requestTemporaryFullAccuracyAuthorization(withPurposeKey: "TraceletFullAccuracy")`. Both APIs require the consuming app's `Info.plist` to declare the `TraceletFullAccuracy` key inside `NSLocationTemporaryUsageDescriptionDictionary`. Without it, iOS 18+ silently rejects the service session — `didUpdateLocations` never fires, `getCurrentPosition` returns nil, and `lastLocationTime` stays pinned at `0` even after a successful `start()`. The iOS config plugin now auto-injects the dictionary entry. Override the message via the new `fullAccuracyUsageDescription` plugin prop.
+
 ## [0.1.2] - 2026-05-08
 
 ### Fixed
