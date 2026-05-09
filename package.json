@@ -4,6 +4,7 @@
     "description": "Expo Module wrapping the Tracelet SDK for force-kill-resilient driver location tracking on iOS and Android.",
     "main": "build/index.js",
     "types": "build/index.d.ts",
+    "sideEffects": false,
     "files": [
         "build",
         "android",
@@ -20,8 +21,8 @@
         "build": "expo-module build && bun run build:plugin",
         "build:plugin": "expo-module build plugin",
         "clean": "expo-module clean && rm -rf plugin/build",
-        "lint": "expo-module lint",
-        "lint:fix": "expo-module lint --fix",
+        "lint": "eslint src plugin/src",
+        "lint:fix": "eslint src plugin/src --fix",
         "format": "node node_modules/prettier/bin/prettier.cjs --write .",
         "format:check": "node node_modules/prettier/bin/prettier.cjs --check .",
         "typecheck": "tsc --noEmit",
@@ -60,12 +61,16 @@
     },
     "dependencies": {},
     "devDependencies": {
+        "@eslint/js": "^10.0.1",
         "@types/react": "~19.2.10",
+        "eslint": "^9",
         "expo": "^55.0.20",
         "expo-module-scripts": "^55.0.2",
+        "globals": "^17.6.0",
         "prettier": "^3.4.2",
         "react-native": "0.83.6",
-        "typescript": "~5.9.2"
+        "typescript": "~5.9.2",
+        "typescript-eslint": "^8.59.2"
     },
     "peerDependencies": {
         "expo": "*",

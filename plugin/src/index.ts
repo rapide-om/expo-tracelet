@@ -6,7 +6,6 @@ import { withTraceletIos } from './withTraceletIos';
 
 // `require` so we don't pull dist-typings into the build, and so we always
 // read the version that's actually installed alongside the plugin.
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const pkg: { name: string; version: string } = require('../../package.json');
 
 const withExpoTracelet: ConfigPlugin<ExpoTraceletPluginProps | void> = (config, props) => {
