@@ -1,6 +1,6 @@
 {
     "name": "@rapide-om/expo-tracelet",
-    "version": "0.1.3",
+    "version": "0.1.4",
     "description": "Expo Module wrapping the Tracelet SDK for force-kill-resilient driver location tracking on iOS and Android.",
     "main": "build/index.js",
     "types": "build/index.d.ts",

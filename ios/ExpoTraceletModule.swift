@@ -14,6 +14,21 @@ public class ExpoTraceletModule: Module {
     private static weak var current: ExpoTraceletModule?
     private static var senderRegistered = false
 
+    /// Run the given block on the main thread synchronously, returning its
+    /// value. Apple's CLLocationManager docs require all configuration calls
+    /// (`startUpdatingLocation`, `requestLocation`, delegate setup, …) to
+    /// happen on a thread with a live runloop — i.e., the main thread. Expo
+    /// Modules' `AsyncFunction` runs on a background queue, so wrapping each
+    /// SDK invocation in `onMain` is required for `didUpdateLocations` to
+    /// fire reliably. This was the root cause of `lastLocationTime: 0` and
+    /// silent location-streaming failures in 0.1.x.
+    private static func onMain<T>(_ block: () -> T) -> T {
+        if Thread.isMainThread {
+            return block()
+        }
+        return DispatchQueue.main.sync(execute: block)
+    }
+
     public func definition() -> ModuleDefinition {
         Name("ExpoTracelet")
 
@@ -47,47 +62,43 @@ public class ExpoTraceletModule: Module {
         // ---------------------------------------------------------------
 
         AsyncFunction("ready") { (config: [String: Any]) -> [String: Any] in
-            // Register the event sender exactly once per process. Tracelet's
-            // setEventSender precondition crashes if called after the SDK is
-            // ready (which happens after the first JS reload, since the
-            // singleton survives the JS context teardown). The closure
-            // dispatches through the static `current` pointer so reloads
-            // keep working.
-            if !ExpoTraceletModule.senderRegistered {
-                self.sdk.setEventSender(RNTraceletEventSender { eventName, data in
-                    ExpoTraceletModule.current?.sendEvent(eventName, data)
-                })
-                ExpoTraceletModule.senderRegistered = true
+            return Self.onMain {
+                if !ExpoTraceletModule.senderRegistered {
+                    self.sdk.setEventSender(RNTraceletEventSender { eventName, data in
+                        ExpoTraceletModule.current?.sendEvent(eventName, data)
+                    })
+                    ExpoTraceletModule.senderRegistered = true
+                }
+                return self.sdk.ready(config: config)
             }
-            return self.sdk.ready(config: config)
         }
 
         AsyncFunction("start") { () -> [String: Any] in
-            return self.sdk.start()
+            return Self.onMain { self.sdk.start() }
         }
 
         AsyncFunction("stop") { () -> [String: Any] in
-            return self.sdk.stop()
+            return Self.onMain { self.sdk.stop() }
         }
 
         AsyncFunction("startGeofences") { () -> [String: Any] in
-            return self.sdk.startGeofences()
+            return Self.onMain { self.sdk.startGeofences() }
         }
 
         AsyncFunction("startPeriodic") { () -> [String: Any] in
-            return self.sdk.startPeriodic()
+            return Self.onMain { self.sdk.startPeriodic() }
         }
 
         AsyncFunction("getState") { () -> [String: Any] in
-            return self.sdk.getState()
+            return Self.onMain { self.sdk.getState() }
         }
 
         AsyncFunction("setConfig") { (config: [String: Any]) -> [String: Any] in
-            return self.sdk.setConfig(config)
+            return Self.onMain { self.sdk.setConfig(config) }
         }
 
         AsyncFunction("reset") { (config: [String: Any]?) -> [String: Any] in
-            return self.sdk.reset(config)
+            return Self.onMain { self.sdk.reset(config) }
         }
 
         // ---------------------------------------------------------------
@@ -95,33 +106,38 @@ public class ExpoTraceletModule: Module {
         // ---------------------------------------------------------------
 
         AsyncFunction("getCurrentPosition") { (options: [String: Any], promise: Promise) in
-            self.sdk.getCurrentPosition(options: options) { result in
-                promise.resolve(result)
+            // getCurrentPosition uses an async callback, so dispatch the
+            // outer call on main; the SDK's internal `requestLocation`
+            // delegate fires on main automatically.
+            DispatchQueue.main.async {
+                self.sdk.getCurrentPosition(options: options) { result in
+                    promise.resolve(result)
+                }
             }
         }
 
         AsyncFunction("getLastKnownLocation") { (options: [String: Any]) -> [String: Any]? in
-            return self.sdk.getLastKnownLocation(options: options)
+            return Self.onMain { self.sdk.getLastKnownLocation(options: options) }
         }
 
         AsyncFunction("watchPosition") { (options: [String: Any]) -> Int in
-            return self.sdk.watchPosition(options: options)
+            return Self.onMain { self.sdk.watchPosition(options: options) }
         }
 
         AsyncFunction("stopWatchPosition") { (watchId: Int) -> Bool in
-            return self.sdk.stopWatchPosition(watchId)
+            return Self.onMain { self.sdk.stopWatchPosition(watchId) }
         }
 
         AsyncFunction("changePace") { (isMoving: Bool) -> Bool in
-            return self.sdk.changePace(isMoving)
+            return Self.onMain { self.sdk.changePace(isMoving) }
         }
 
         AsyncFunction("getOdometer") { () -> Double in
-            return self.sdk.getOdometer()
+            return Self.onMain { self.sdk.getOdometer() }
         }
 
         AsyncFunction("setOdometer") { (value: Double) -> [String: Any] in
-            return self.sdk.setOdometer(value)
+            return Self.onMain { self.sdk.setOdometer(value) }
         }
 
         // ---------------------------------------------------------------
@@ -129,21 +145,23 @@ public class ExpoTraceletModule: Module {
         // ---------------------------------------------------------------
 
         AsyncFunction("sync") { (promise: Promise) in
-            self.sdk.sync { result in
-                promise.resolve(result)
+            DispatchQueue.main.async {
+                self.sdk.sync { result in
+                    promise.resolve(result)
+                }
             }
         }
 
         AsyncFunction("setDynamicHeaders") { (headers: [String: String]) in
-            self.sdk.setDynamicHeaders(headers)
+            Self.onMain { self.sdk.setDynamicHeaders(headers) }
         }
 
         AsyncFunction("setRouteContext") { (context: [String: Any]) in
-            self.sdk.setRouteContext(context)
+            Self.onMain { self.sdk.setRouteContext(context) }
         }
 
         AsyncFunction("clearRouteContext") {
-            self.sdk.clearRouteContext()
+            Self.onMain { self.sdk.clearRouteContext() }
         }
 
         // ---------------------------------------------------------------
@@ -151,27 +169,27 @@ public class ExpoTraceletModule: Module {
         // ---------------------------------------------------------------
 
         AsyncFunction("getLocations") { (query: [String: Any]?) -> [[String: Any]] in
-            return self.sdk.getLocations(query: query)
+            return Self.onMain { self.sdk.getLocations(query: query) }
         }
 
         AsyncFunction("getCount") { (query: [String: Any]?) -> Int in
-            return self.sdk.getCount(query: query)
+            return Self.onMain { self.sdk.getCount(query: query) }
         }
 
         AsyncFunction("destroyLocations") { () -> Bool in
-            return self.sdk.destroyLocations()
+            return Self.onMain { self.sdk.destroyLocations() }
         }
 
         AsyncFunction("destroySyncedLocations") { () -> Int in
-            return self.sdk.destroySyncedLocations()
+            return Self.onMain { self.sdk.destroySyncedLocations() }
         }
 
         AsyncFunction("destroyLocation") { (uuid: String) -> Bool in
-            return self.sdk.destroyLocation(uuid)
+            return Self.onMain { self.sdk.destroyLocation(uuid) }
         }
 
         AsyncFunction("insertLocation") { (params: [String: Any]) -> String in
-            return self.sdk.insertLocation(params)
+            return Self.onMain { self.sdk.insertLocation(params) }
         }
 
         // ---------------------------------------------------------------
@@ -179,11 +197,11 @@ public class ExpoTraceletModule: Module {
         // ---------------------------------------------------------------
 
         AsyncFunction("getPermissionStatus") { () -> Int in
-            return self.sdk.getPermissionStatus()
+            return Self.onMain { self.sdk.getPermissionStatus() }
         }
 
         AsyncFunction("hasBackgroundPermission") { () -> Bool in
-            return self.sdk.hasBackgroundPermission
+            return Self.onMain { self.sdk.hasBackgroundPermission }
         }
 
         AsyncFunction("isPowerSaveMode") { () -> Bool in
@@ -191,7 +209,7 @@ public class ExpoTraceletModule: Module {
         }
 
         AsyncFunction("getProviderState") { () -> [String: Any] in
-            return self.sdk.getProviderState()
+            return Self.onMain { self.sdk.getProviderState() }
         }
 
         AsyncFunction("getSensors") { () -> [String: Any] in
@@ -227,11 +245,11 @@ public class ExpoTraceletModule: Module {
         // ---------------------------------------------------------------
 
         AsyncFunction("onAppWillTerminate") {
-            self.sdk.onAppWillTerminate()
+            Self.onMain { self.sdk.onAppWillTerminate() }
         }
 
         AsyncFunction("autoResumeTracking") {
-            self.sdk.autoResumeTracking()
+            Self.onMain { self.sdk.autoResumeTracking() }
         }
     }
 }

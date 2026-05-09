@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.1.4] - 2026-05-09
+
+### Fixed
+
+- **Critical: iOS location streaming silently broken — `didUpdateLocations` never fired.** Apple's `CLLocationManager` documentation requires all configuration calls (`startUpdatingLocation`, `requestLocation`, delegate setup, etc.) to happen on a thread with an active runloop — the main thread. Expo Modules' `AsyncFunction` runs handlers on a background queue, so our previous bridge was calling `TraceletSdk.start() → locationManager.startUpdatingLocation()` from a non-main thread. iOS silently accepted the call but never delivered delegate callbacks, leaving `lastLocationTime` pinned at `0`, `getCurrentPosition` returning `nil`, and no `onLocation` events ever emitted. The Flutter plugin works because Pigeon HostApi runs on the main queue. The bridge now wraps every SDK invocation in a `DispatchQueue.main.sync` (or `.async` for callback-based methods) so CLLocationManager operates on the main thread as required.
+
 ## [0.1.3] - 2026-05-09
 
 ### Fixed
