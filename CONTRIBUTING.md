@@ -4,14 +4,14 @@ Thank you for your interest in contributing. This document outlines the process 
 
 ## Table of Contents
 
--   [Development Setup](#development-setup)
--   [Repository Layout](#repository-layout)
--   [Development Workflow](#development-workflow)
--   [Code Standards](#code-standards)
--   [Testing on a Device](#testing-on-a-device)
--   [Pull Request Process](#pull-request-process)
--   [Releasing](#releasing)
--   [License](#license)
+- [Development Setup](#development-setup)
+- [Repository Layout](#repository-layout)
+- [Development Workflow](#development-workflow)
+- [Code Standards](#code-standards)
+- [Testing on a Device](#testing-on-a-device)
+- [Pull Request Process](#pull-request-process)
+- [Releasing](#releasing)
+- [License](#license)
 
 ---
 
@@ -19,11 +19,11 @@ Thank you for your interest in contributing. This document outlines the process 
 
 Requirements:
 
--   Bun ≥ 1.0
--   Node.js ≥ 20 (for tooling that doesn't support Bun yet)
--   Xcode ≥ 15 (for iOS builds)
--   Android Studio + JDK 17 (for Android builds)
--   A consuming Expo app (we develop against [`rapide-navigator`](https://github.com/rapide-om/rapide-navigator) using `bun add file:../expo-tracelet`)
+- Bun ≥ 1.0
+- Node.js ≥ 20 (for tooling that doesn't support Bun yet)
+- Xcode ≥ 15 (for iOS builds)
+- Android Studio + JDK 17 (for Android builds)
+- A consuming Expo app (we develop against [`rapide-navigator`](https://github.com/rapide-om/rapide-navigator) using `bun add file:../expo-tracelet`)
 
 ```bash
 git clone git@github.com:rapide-om/expo-tracelet.git
@@ -98,21 +98,21 @@ Native code changes require a rebuild of the consuming app (Metro alone won't pi
 
 ### TypeScript
 
--   Use `import type` for type-only imports
--   Prefer nullish coalescing (`??`) over logical OR (`||`)
--   No `any` unless interfacing with untyped native payloads — and even then prefer `unknown` + a type guard
--   Public types live in `src/ExpoTracelet.types.ts`; never re-shape Tracelet payloads inside bridge code
+- Use `import type` for type-only imports
+- Prefer nullish coalescing (`??`) over logical OR (`||`)
+- No `any` unless interfacing with untyped native payloads — and even then prefer `unknown` + a type guard
+- Public types live in `src/ExpoTracelet.types.ts`; never re-shape Tracelet payloads inside bridge code
 
 ### Kotlin (Android)
 
--   Follow Tracelet's API verbatim — every public bridge method maps 1:1 to a `TraceletSdk` method
--   Forward all native exceptions through `Promise.reject` so JS callers see them
--   Don't hold `appContext.reactContext` references across coroutines — use `applicationContext`
+- Follow Tracelet's API verbatim — every public bridge method maps 1:1 to a `TraceletSdk` method
+- Forward all native exceptions through `Promise.reject` so JS callers see them
+- Don't hold `appContext.reactContext` references across coroutines — use `applicationContext`
 
 ### Swift (iOS)
 
--   Use `[weak self]` when capturing in escaping closures (event-sender callbacks)
--   Bridge methods that return `[String: Any]` from `TraceletSdk` should return them directly — Expo Modules handles serialization
+- Use `[weak self]` when capturing in escaping closures (event-sender callbacks)
+- Bridge methods that return `[String: Any]` from `TraceletSdk` should return them directly — Expo Modules handles serialization
 
 ### Commit Messages
 
@@ -131,8 +131,8 @@ Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`, `ci`
 
 We don't currently have a unit test suite — the value of tests for bridge code that just forwards calls to the upstream SDK is low. Verification happens via integration testing in a real Expo app on real hardware:
 
--   **Android**: test on a Xiaomi or Huawei device for OEM battery-saver torture-testing. Verify foreground service survives swipe-away. Verify `BOOT_COMPLETED` triggers when the device reboots while tracking is active.
--   **iOS**: test on a physical device (simulator can't deliver background location reliably). Verify `Always` permission flow. Verify significant-location-change relaunch after the app is killed by iOS.
+- **Android**: test on a Xiaomi or Huawei device for OEM battery-saver torture-testing. Verify foreground service survives swipe-away. Verify `BOOT_COMPLETED` triggers when the device reboots while tracking is active.
+- **iOS**: test on a physical device (simulator can't deliver background location reliably). Verify `Always` permission flow. Verify significant-location-change relaunch after the app is killed by iOS.
 
 When opening a PR for a behavioral change, include a short device test plan in the PR description.
 

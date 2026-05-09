@@ -21,9 +21,9 @@ If you discover a security vulnerability, **do not open a public issue**.
 
 Expected response window:
 
--   Initial acknowledgement within 72 hours
--   Status updates at least weekly during triage
--   Public disclosure after a fix ships, with credit to the reporter (if desired)
+- Initial acknowledgement within 72 hours
+- Status updates at least weekly during triage
+- Public disclosure after a fix ships, with credit to the reporter (if desired)
 
 ## Scope
 
@@ -31,6 +31,6 @@ This package is a thin Expo Modules bridge over the [Tracelet SDK](https://githu
 
 ## Security best practices for consumers
 
--   Keep this package and the upstream Tracelet SDK pin up to date.
--   Never log or expose API tokens or driver IDs that you pass to `Tracelet.ready({ http })`.
--   The Tracelet SDK persists locations in a SQLite database on the device. If your threat model requires it, enable the upstream `encryptDatabase` option (see Tracelet docs).
+- Keep this package and the upstream Tracelet SDK pin up to date.
+- Never log or expose API tokens or driver IDs that you pass to `Tracelet.ready({ http })`.
+- The Tracelet SDK persists locations in a SQLite database on the device. If your threat model requires it, enable the upstream `encryptDatabase` option (see Tracelet docs).

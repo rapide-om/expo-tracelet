@@ -58,11 +58,15 @@ jobs:
             - name: Cache Gradle
               uses: gradle/actions/setup-gradle@v4
 
-            - name: Validate build.gradle parses
+            - name: Validate build.gradle pins Tracelet SDK version
               run: |
-                  # Sanity check: build.gradle is valid Groovy and references a
-                  # specific Tracelet SDK version. We can't do a full compile here
-                  # without an Expo app + Android SDK harness, but a parse check
-                  # catches obvious syntax errors before they reach a consumer.
+                  # Sanity check: build.gradle declares a `TRACELET_SDK_VERSION`
+                  # constant pinned to a specific minor.patch and uses it via
+                  # ${TRACELET_SDK_VERSION} in the dependency declaration. We
+                  # can't do a full compile here without an Expo app + Android
+                  # SDK harness, but this catches accidental version drift.
                   test -f android/build.gradle
-                  grep -E "com\\.ikolvi:tracelet-sdk:[0-9]+\\.[0-9]+\\.[0-9]+" android/build.gradle || (echo "Tracelet SDK version not pinned"; exit 1)
+                  grep -E "TRACELET_SDK_VERSION\s*=\s*'[0-9]+\.[0-9]+\.[0-9]+'" android/build.gradle \
+                    || (echo "::error::TRACELET_SDK_VERSION not pinned in android/build.gradle"; exit 1)
+                  grep -E 'com\.ikolvi:tracelet-sdk:\$\{TRACELET_SDK_VERSION\}' android/build.gradle \
+                    || (echo "::error::tracelet-sdk dependency does not use \${TRACELET_SDK_VERSION}"; exit 1)

@@ -4,21 +4,21 @@
 
 ## Type of change
 
--   [ ] Bug fix (non-breaking)
--   [ ] New feature (non-breaking)
--   [ ] Breaking change
--   [ ] Documentation
--   [ ] Tooling / CI
--   [ ] Upstream Tracelet SDK version bump
+- [ ] Bug fix (non-breaking)
+- [ ] New feature (non-breaking)
+- [ ] Breaking change
+- [ ] Documentation
+- [ ] Tooling / CI
+- [ ] Upstream Tracelet SDK version bump
 
 ## Checklist
 
--   [ ] `bun run format:check` passes
--   [ ] `bun run lint` passes
--   [ ] `bun run typecheck` passes
--   [ ] `bun run build` succeeds
--   [ ] CHANGELOG.md updated under `[Unreleased]`
--   [ ] README updated if public API changed
+- [ ] `bun run format:check` passes
+- [ ] `bun run lint` passes
+- [ ] `bun run typecheck` passes
+- [ ] `bun run build` succeeds
+- [ ] CHANGELOG.md updated under `[Unreleased]`
+- [ ] README updated if public API changed
 
 ## Device test plan
 

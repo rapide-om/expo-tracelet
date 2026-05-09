@@ -10,24 +10,24 @@
 
 ## Table of Contents
 
--   [Why this exists](#why-this-exists)
--   [Architecture](#architecture)
--   [Install](#install)
--   [Configuration](#configuration)
--   [Usage](#usage)
--   [API](#api)
--   [Permissions](#permissions)
--   [Versioning](#versioning)
--   [Troubleshooting](#troubleshooting)
--   [Contributing](#contributing)
--   [License](#license)
+- [Why this exists](#why-this-exists)
+- [Architecture](#architecture)
+- [Install](#install)
+- [Configuration](#configuration)
+- [Usage](#usage)
+- [API](#api)
+- [Permissions](#permissions)
+- [Versioning](#versioning)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Why this exists
 
 The off-the-shelf options for Expo background tracking either:
 
--   **Don't survive force-kill on Android.** `expo-location` background updates are paused aggressively by iOS and killed by Android OEM battery managers (Xiaomi MIUI, Huawei EMUI, Samsung One UI). Unacceptable for delivery-driver apps.
--   **Cost $400/year.** `react-native-background-geolocation` (Transistorsoft) requires a paid commercial license for production use.
+- **Don't survive force-kill on Android.** `expo-location` background updates are paused aggressively by iOS and killed by Android OEM battery managers (Xiaomi MIUI, Huawei EMUI, Samsung One UI). Unacceptable for delivery-driver apps.
+- **Cost $400/year.** `react-native-background-geolocation` (Transistorsoft) requires a paid commercial license for production use.
 
 The Tracelet SDK is **Apache-2.0**, ships its native engines as conventional package-manager artifacts, and provides everything the Transistorsoft library does — foreground service with `foregroundServiceType="location"` + `START_REDELIVER_INTENT` + `stopWithTask=false`, BOOT_COMPLETED autostart, OEM-aware autostart deep-links, SQLite offline queue, OkHttp retry/backoff, Kalman GPS smoothing, motion detection, geofencing, scheduling.
 
@@ -88,8 +88,8 @@ module.exports = ({ config }) => ({
 
 The plugin injects:
 
--   **iOS** `Info.plist`: `NSLocationAlwaysAndWhenInUseUsageDescription`, `NSLocationWhenInUseUsageDescription`, `NSLocationAlwaysUsageDescription`, `NSMotionUsageDescription`, `UIBackgroundModes` (`location`, `fetch`, `processing`).
--   **Android** `AndroidManifest.xml`: required permissions (`FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_LOCATION`, `RECEIVE_BOOT_COMPLETED`, `WAKE_LOCK`, `POST_NOTIFICATIONS`, `ACTIVITY_RECOGNITION`, location permissions). Tracelet's AAR ships its own services, receivers, and the foreground service registration via manifest merging.
+- **iOS** `Info.plist`: `NSLocationAlwaysAndWhenInUseUsageDescription`, `NSLocationWhenInUseUsageDescription`, `NSLocationAlwaysUsageDescription`, `NSMotionUsageDescription`, `UIBackgroundModes` (`location`, `fetch`, `processing`).
+- **Android** `AndroidManifest.xml`: required permissions (`FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_LOCATION`, `RECEIVE_BOOT_COMPLETED`, `WAKE_LOCK`, `POST_NOTIFICATIONS`, `ACTIVITY_RECOGNITION`, location permissions). Tracelet's AAR ships its own services, receivers, and the foreground service registration via manifest merging.
 
 ## Usage
 
@@ -205,9 +205,9 @@ const provider = await Tracelet.getProviderState();
 
 For production apps you should also coach the user through:
 
--   iOS: granting `Always` (not just `When in Use`) for true background.
--   Android 11+: granting `Background Location` via the secondary system prompt.
--   Android: disabling battery optimization for your app (Xiaomi/Huawei/Samsung have additional autostart toggles).
+- iOS: granting `Always` (not just `When in Use`) for true background.
+- Android 11+: granting `Background Location` via the secondary system prompt.
+- Android: disabling battery optimization for your app (Xiaomi/Huawei/Samsung have additional autostart toggles).
 
 ## Versioning
 
