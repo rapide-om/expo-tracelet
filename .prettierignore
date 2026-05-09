@@ -1,0 +1,10 @@
+node_modules
+build
+plugin/build
+*.tsbuildinfo
+bun.lock
+android
+ios
+LICENSE
+NOTICE
+CHANGELOG.md

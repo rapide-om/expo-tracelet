@@ -7,7 +7,7 @@ package = JSON.parse(File.read(File.join(__dir__, '..', 'package.json')))
 TRACELET_SDK_VERSION = '~> 1.1'
 
 Pod::Spec.new do |s|
-  s.name           = 'ExpoRapideTracking'
+  s.name           = 'ExpoTracelet'
   s.version        = package['version']
   s.summary        = package['description']
   s.description    = package['description']
@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
     :ios => '15.1'
   }
   s.swift_version  = '5.9'
-  s.source         = { git: 'https://github.com/rapide-om/expo-rapide-tracking' }
+  s.source         = { git: 'https://github.com/rapide-om/expo-tracelet' }
   s.static_framework = true
 
   s.dependency 'ExpoModulesCore'

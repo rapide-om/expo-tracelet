@@ -1,8 +1,4 @@
-import {
-    type ConfigPlugin,
-    withAndroidManifest,
-    withInfoPlist,
-} from 'expo/config-plugins';
+import { type ConfigPlugin, withAndroidManifest, withInfoPlist } from 'expo/config-plugins';
 
 type Props = {
     /**
@@ -44,7 +40,7 @@ const REQUIRED_ANDROID_PERMISSIONS = [
 
 const REQUIRED_IOS_BACKGROUND_MODES = ['location', 'fetch', 'processing'];
 
-const withExpoRapideTracking: ConfigPlugin<Props | void> = (config, props = {}) => {
+const withExpoTracelet: ConfigPlugin<Props | void> = (config, props = {}) => {
     const {
         locationAlwaysAndWhenInUseUsageDescription = DEFAULT_LOCATION_USAGE,
         locationWhenInUseUsageDescription = locationAlwaysAndWhenInUseUsageDescription,
@@ -54,7 +50,8 @@ const withExpoRapideTracking: ConfigPlugin<Props | void> = (config, props = {}) 
     config = withInfoPlist(config, (cfg) => {
         const plist = cfg.modResults;
         plist.NSLocationAlwaysAndWhenInUseUsageDescription =
-            plist.NSLocationAlwaysAndWhenInUseUsageDescription ?? locationAlwaysAndWhenInUseUsageDescription;
+            plist.NSLocationAlwaysAndWhenInUseUsageDescription ??
+            locationAlwaysAndWhenInUseUsageDescription;
         plist.NSLocationWhenInUseUsageDescription =
             plist.NSLocationWhenInUseUsageDescription ?? locationWhenInUseUsageDescription;
         plist.NSLocationAlwaysUsageDescription =
@@ -76,7 +73,7 @@ const withExpoRapideTracking: ConfigPlugin<Props | void> = (config, props = {}) 
         manifest['uses-permission'] = manifest['uses-permission'] ?? [];
         for (const name of REQUIRED_ANDROID_PERMISSIONS) {
             const has = manifest['uses-permission']!.some(
-                (entry) => entry.$?.['android:name'] === name
+                (entry) => entry.$?.['android:name'] === name,
             );
             if (!has) {
                 manifest['uses-permission']!.push({ $: { 'android:name': name } });
@@ -88,4 +85,4 @@ const withExpoRapideTracking: ConfigPlugin<Props | void> = (config, props = {}) 
     return config;
 };
 
-export default withExpoRapideTracking;
+export default withExpoTracelet;

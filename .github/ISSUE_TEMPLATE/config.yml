@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+    - name: Documentation
+      url: https://github.com/rapide-om/expo-tracelet#readme
+      about: Read the README before opening an issue.
+    - name: Upstream Tracelet SDK
+      url: https://github.com/Ikolvi/Tracelet
+      about: For bugs in the underlying tracking engine, file upstream.

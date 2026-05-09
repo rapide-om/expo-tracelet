@@ -1,4 +1,4 @@
-package om.rapide.tracking
+package om.rapide.tracelet
 
 import com.ikolvi.tracelet.sdk.TraceletEventSender
 

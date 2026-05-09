@@ -1,17 +1,17 @@
-package om.rapide.tracking
+package om.rapide.tracelet
 
 import com.ikolvi.tracelet.sdk.TraceletSdk
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 
-class ExpoRapideTrackingModule : Module() {
+class ExpoTraceletModule : Module() {
 
     private val sdk: TraceletSdk by lazy {
         TraceletSdk.getInstance(appContext.reactContext!!.applicationContext)
     }
 
     override fun definition() = ModuleDefinition {
-        Name("ExpoRapideTracking")
+        Name("ExpoTracelet")
 
         Events(
             "onLocation",
@@ -40,7 +40,7 @@ class ExpoRapideTrackingModule : Module() {
 
         AsyncFunction("ready") { config: Map<String, Any?>, promise: expo.modules.kotlin.Promise ->
             sdk.setEventSender(RNTraceletEventSender { eventName, data ->
-                this@ExpoRapideTrackingModule.sendEvent(eventName, data)
+                this@ExpoTraceletModule.sendEvent(eventName, data)
             })
             sdk.ready(config) { state -> promise.resolve(state) }
         }

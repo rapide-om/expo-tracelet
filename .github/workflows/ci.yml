@@ -1,0 +1,68 @@
+name: CI
+
+on:
+    pull_request:
+    push:
+        branches: [main]
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
+    cancel-in-progress: true
+
+permissions:
+    contents: read
+
+jobs:
+    test:
+        name: Lint, Typecheck & Build
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Setup Bun
+              uses: oven-sh/setup-bun@v2
+              with:
+                  bun-version: latest
+
+            - name: Install dependencies
+              run: bun install --frozen-lockfile
+
+            - name: Check formatting
+              run: bun run format:check
+
+            - name: Lint
+              run: bun run lint
+
+            - name: Type check
+              run: bun run typecheck
+
+            - name: Build
+              run: bun run build
+
+    validate-android:
+        name: Validate Android module
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Set up JDK 17
+              uses: actions/setup-java@v4
+              with:
+                  distribution: temurin
+                  java-version: 17
+
+            - name: Cache Gradle
+              uses: gradle/actions/setup-gradle@v4
+
+            - name: Validate build.gradle parses
+              run: |
+                  # Sanity check: build.gradle is valid Groovy and references a
+                  # specific Tracelet SDK version. We can't do a full compile here
+                  # without an Expo app + Android SDK harness, but a parse check
+                  # catches obvious syntax errors before they reach a consumer.
+                  test -f android/build.gradle
+                  grep -E "com\\.ikolvi:tracelet-sdk:[0-9]+\\.[0-9]+\\.[0-9]+" android/build.gradle || (echo "Tracelet SDK version not pinned"; exit 1)

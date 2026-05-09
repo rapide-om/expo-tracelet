@@ -1,0 +1,38 @@
+name: 'Feature Request'
+description: Suggest a new feature or enhancement
+labels: ['enhancement']
+body:
+    - type: markdown
+      attributes:
+          value: |
+              Thanks for suggesting an improvement.
+
+              Before submitting, please check existing requests:
+              - [Open enhancement issues](https://github.com/rapide-om/expo-tracelet/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement)
+
+    - type: textarea
+      id: problem
+      attributes:
+          label: Problem description
+          description: What use case is currently hard or impossible?
+      validations:
+          required: true
+
+    - type: textarea
+      id: solution
+      attributes:
+          label: Proposed solution
+          description: |
+              Sketch the API or behavior you'd like to see. If the upstream Tracelet SDK already exposes the capability, link the relevant method.
+      validations:
+          required: true
+
+    - type: textarea
+      id: alternatives
+      attributes:
+          label: Alternatives considered
+
+    - type: textarea
+      id: additional
+      attributes:
+          label: Additional context

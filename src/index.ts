@@ -1,18 +1,18 @@
 import type { EventSubscription } from 'expo-modules-core';
 
-import ExpoRapideTrackingModule from './ExpoRapideTrackingModule';
+import ExpoTraceletModule from './ExpoTraceletModule';
 import type {
     CurrentPositionOptions,
-    ExpoRapideTrackingEventName,
-    ExpoRapideTrackingEvents,
+    ExpoTraceletEventName,
+    ExpoTraceletEvents,
     LocationPayload,
     LocationsQuery,
     ProviderState,
     State,
     TraceletConfig,
-} from './ExpoRapideTracking.types';
+} from './ExpoTracelet.types';
 
-export * from './ExpoRapideTracking.types';
+export * from './ExpoTracelet.types';
 
 /**
  * Initialize the SDK. Must be called before any other method.
@@ -21,65 +21,67 @@ export * from './ExpoRapideTracking.types';
  * delivering events to JS listeners as soon as `ready()` resolves.
  */
 export function ready(config: TraceletConfig): Promise<State> {
-    return ExpoRapideTrackingModule.ready(config);
+    return ExpoTraceletModule.ready(config);
 }
 
 /** Start continuous-mode tracking. */
 export function start(): Promise<State> {
-    return ExpoRapideTrackingModule.start();
+    return ExpoTraceletModule.start();
 }
 
 /** Stop tracking. Respects `app.stopOnTerminate=false` for survival behavior. */
 export function stop(): Promise<State> {
-    return ExpoRapideTrackingModule.stop();
+    return ExpoTraceletModule.stop();
 }
 
 /** Start geofence-only mode (no continuous GPS — battery efficient). */
 export function startGeofences(): Promise<State> {
-    return ExpoRapideTrackingModule.startGeofences();
+    return ExpoTraceletModule.startGeofences();
 }
 
 /** Start periodic-fix mode (one-shot wake-ups instead of streaming GPS). */
 export function startPeriodic(): Promise<State> {
-    return ExpoRapideTrackingModule.startPeriodic();
+    return ExpoTraceletModule.startPeriodic();
 }
 
 export function getState(): Promise<State> {
-    return ExpoRapideTrackingModule.getState();
+    return ExpoTraceletModule.getState();
 }
 
 export function setConfig(config: TraceletConfig): Promise<State> {
-    return ExpoRapideTrackingModule.setConfig(config);
+    return ExpoTraceletModule.setConfig(config);
 }
 
 export function reset(config?: TraceletConfig | null): Promise<State> {
-    return ExpoRapideTrackingModule.reset(config ?? null);
+    return ExpoTraceletModule.reset(config ?? null);
 }
 
 // ---------------------------------------------------------------------------
 // Location
 // ---------------------------------------------------------------------------
 
-export function getCurrentPosition(options: CurrentPositionOptions = {}): Promise<LocationPayload | null> {
-    return ExpoRapideTrackingModule.getCurrentPosition(options);
+export function getCurrentPosition(
+    options: CurrentPositionOptions = {},
+): Promise<LocationPayload | null> {
+    return ExpoTraceletModule.getCurrentPosition(options);
 }
 
 export function getLastKnownLocation(
-    options: { persist?: boolean; extras?: Record<string, unknown> } = {}
+    options: { persist?: boolean; extras?: Record<string, unknown> } = {},
 ): Promise<LocationPayload | null> {
-    return ExpoRapideTrackingModule.getLastKnownLocation(options);
+    return ExpoTraceletModule.getLastKnownLocation(options);
 }
 
 export function changePace(isMoving: boolean) {
-    return ExpoRapideTrackingModule.changePace(isMoving);
+    return ExpoTraceletModule.changePace(isMoving);
 }
 
 export function getOdometer(): Promise<number> {
-    return ExpoRapideTrackingModule.getOdometer();
+    return ExpoTraceletModule.getOdometer();
 }
 
 export function setOdometer(value: number) {
-    return ExpoRapideTrackingModule.setOdometer(value);
+    return ExpoTraceletModule.setOdometer(value);
 }
 
 // ---------------------------------------------------------------------------
@@ -87,19 +89,19 @@ export function setOdometer(value: number) {
 // ---------------------------------------------------------------------------
 
 export function sync(): Promise<LocationPayload[]> {
-    return ExpoRapideTrackingModule.sync();
+    return ExpoTraceletModule.sync();
 }
 
 export function setDynamicHeaders(headers: Record<string, string>): Promise<void> {
-    return ExpoRapideTrackingModule.setDynamicHeaders(headers);
+    return ExpoTraceletModule.setDynamicHeaders(headers);
 }
 
 export function setRouteContext(context: Record<string, unknown>): Promise<void> {
-    return ExpoRapideTrackingModule.setRouteContext(context);
+    return ExpoTraceletModule.setRouteContext(context);
 }
 
 export function clearRouteContext(): Promise<void> {
-    return ExpoRapideTrackingModule.clearRouteContext();
+    return ExpoTraceletModule.clearRouteContext();
 }
 
 // ---------------------------------------------------------------------------
@@ -107,19 +109,19 @@ export function clearRouteContext(): Promise<void> {
 // ---------------------------------------------------------------------------
 
 export function getLocations(query?: LocationsQuery): Promise<LocationPayload[]> {
-    return ExpoRapideTrackingModule.getLocations(query);
+    return ExpoTraceletModule.getLocations(query);
 }
 
 export function getCount(query?: LocationsQuery): Promise<number> {
-    return ExpoRapideTrackingModule.getCount(query);
+    return ExpoTraceletModule.getCount(query);
 }
 
 export function destroyLocations(): Promise<boolean> {
-    return ExpoRapideTrackingModule.destroyLocations();
+    return ExpoTraceletModule.destroyLocations();
 }
 
 export function destroySyncedLocations(): Promise<number> {
-    return ExpoRapideTrackingModule.destroySyncedLocations();
+    return ExpoTraceletModule.destroySyncedLocations();
 }
 
 // ---------------------------------------------------------------------------
@@ -127,38 +129,43 @@ export function destroySyncedLocations(): Promise<number> {
 // ---------------------------------------------------------------------------
 
 export function getPermissionStatus(): Promise<number> {
-    return ExpoRapideTrackingModule.getPermissionStatus();
+    return ExpoTraceletModule.getPermissionStatus();
 }
 
 export function requestPermission(): Promise<number> {
-    return ExpoRapideTrackingModule.requestPermission?.() ?? Promise.resolve(0);
+    return ExpoTraceletModule.requestPermission?.() ?? Promise.resolve(0);
 }
 
 export function getProviderState(): Promise<ProviderState> {
-    return ExpoRapideTrackingModule.getProviderState();
+    return ExpoTraceletModule.getProviderState();
 }
 
 // ---------------------------------------------------------------------------
 // Events
 // ---------------------------------------------------------------------------
 
-export function addListener<E extends ExpoRapideTrackingEventName>(
+export function addListener<E extends ExpoTraceletEventName>(
     event: E,
-    listener: ExpoRapideTrackingEvents[E]
+    listener: ExpoTraceletEvents[E],
 ): EventSubscription {
-    return ExpoRapideTrackingModule.addListener(event, listener as never);
+    return ExpoTraceletModule.addListener(event, listener as never);
 }
 
-export const onLocation = (cb: ExpoRapideTrackingEvents['onLocation']) => addListener('onLocation', cb);
-export const onMotionChange = (cb: ExpoRapideTrackingEvents['onMotionChange']) => addListener('onMotionChange', cb);
-export const onActivityChange = (cb: ExpoRapideTrackingEvents['onActivityChange']) => addListener('onActivityChange', cb);
-export const onProviderChange = (cb: ExpoRapideTrackingEvents['onProviderChange']) => addListener('onProviderChange', cb);
-export const onHeartbeat = (cb: ExpoRapideTrackingEvents['onHeartbeat']) => addListener('onHeartbeat', cb);
-export const onHttp = (cb: ExpoRapideTrackingEvents['onHttp']) => addListener('onHttp', cb);
-export const onEnabledChange = (cb: ExpoRapideTrackingEvents['onEnabledChange']) => addListener('onEnabledChange', cb);
+export const onLocation = (cb: ExpoTraceletEvents['onLocation']) => addListener('onLocation', cb);
+export const onMotionChange = (cb: ExpoTraceletEvents['onMotionChange']) =>
+    addListener('onMotionChange', cb);
+export const onActivityChange = (cb: ExpoTraceletEvents['onActivityChange']) =>
+    addListener('onActivityChange', cb);
+export const onProviderChange = (cb: ExpoTraceletEvents['onProviderChange']) =>
+    addListener('onProviderChange', cb);
+export const onHeartbeat = (cb: ExpoTraceletEvents['onHeartbeat']) =>
+    addListener('onHeartbeat', cb);
+export const onHttp = (cb: ExpoTraceletEvents['onHttp']) => addListener('onHttp', cb);
+export const onEnabledChange = (cb: ExpoTraceletEvents['onEnabledChange']) =>
+    addListener('onEnabledChange', cb);
 
 /** Raw module access for advanced callers. Prefer the named helpers above. */
-export { default as nativeModule } from './ExpoRapideTrackingModule';
+export { default as nativeModule } from './ExpoTraceletModule';
 
 export default {
     ready,

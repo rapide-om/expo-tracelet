@@ -1,12 +1,12 @@
 import ExpoModulesCore
 import TraceletSDK
 
-public class ExpoRapideTrackingModule: Module {
+public class ExpoTraceletModule: Module {
 
     private let sdk = TraceletSdk.shared
 
     public func definition() -> ModuleDefinition {
-        Name("ExpoRapideTracking")
+        Name("ExpoTracelet")
 
         Events(
             "onLocation",

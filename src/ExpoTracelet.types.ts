@@ -139,12 +139,16 @@ export type Geofence = {
     extras?: Record<string, unknown>;
 };
 
-export type ExpoRapideTrackingEvents = {
+export type ExpoTraceletEvents = {
     onLocation: (payload: LocationPayload) => void;
     onMotionChange: (payload: { isMoving: boolean; location: LocationPayload }) => void;
     onActivityChange: (payload: Activity) => void;
     onProviderChange: (payload: ProviderState) => void;
-    onGeofence: (payload: { identifier: string; action: 'ENTER' | 'EXIT' | 'DWELL'; location: LocationPayload }) => void;
+    onGeofence: (payload: {
+        identifier: string;
+        action: 'ENTER' | 'EXIT' | 'DWELL';
+        location: LocationPayload;
+    }) => void;
     onGeofencesChange: (payload: { on: string[]; off: string[] }) => void;
     onHeartbeat: (payload: { location: LocationPayload }) => void;
     onHttp: (payload: { success: boolean; status: number; responseText?: string }) => void;
@@ -160,7 +164,7 @@ export type ExpoRapideTrackingEvents = {
     onBudgetAdjustment: (payload: Record<string, unknown>) => void;
 };
 
-export type ExpoRapideTrackingEventName = keyof ExpoRapideTrackingEvents;
+export type ExpoTraceletEventName = keyof ExpoTraceletEvents;
 
 export type CurrentPositionOptions = {
     timeout?: number;

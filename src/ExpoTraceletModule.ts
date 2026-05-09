@@ -2,16 +2,16 @@ import { NativeModule, requireNativeModule } from 'expo';
 
 import type {
     CurrentPositionOptions,
-    ExpoRapideTrackingEvents,
+    ExpoTraceletEvents,
     Geofence,
     LocationPayload,
     LocationsQuery,
     ProviderState,
     State,
     TraceletConfig,
-} from './ExpoRapideTracking.types';
+} from './ExpoTracelet.types';
 
-declare class ExpoRapideTrackingModule extends NativeModule<ExpoRapideTrackingEvents> {
+declare class ExpoTraceletModule extends NativeModule<ExpoTraceletEvents> {
     // Lifecycle
     ready(config: TraceletConfig): Promise<State>;
     start(): Promise<State>;
@@ -24,7 +24,10 @@ declare class ExpoRapideTrackingModule extends NativeModule<ExpoRapideTrackingEv
 
     // Location
     getCurrentPosition(options?: CurrentPositionOptions): Promise<LocationPayload | null>;
-    getLastKnownLocation(options?: { persist?: boolean; extras?: Record<string, unknown> }): Promise<LocationPayload | null>;
+    getLastKnownLocation(options?: {
+        persist?: boolean;
+        extras?: Record<string, unknown>;
+    }): Promise<LocationPayload | null>;
     watchPosition(options: Record<string, unknown>): Promise<number>;
     stopWatchPosition(watchId: number): Promise<boolean>;
     changePace(isMoving: boolean): Promise<boolean | Record<string, unknown>>;
@@ -83,4 +86,4 @@ declare class ExpoRapideTrackingModule extends NativeModule<ExpoRapideTrackingEv
     autoResumeTracking?(): Promise<void>;
 }
 
-export default requireNativeModule<ExpoRapideTrackingModule>('ExpoRapideTracking');
+export default requireNativeModule<ExpoTraceletModule>('ExpoTracelet');

@@ -1,0 +1,89 @@
+name: 'Bug Report'
+description: Report a reproducible bug or regression
+labels: ['bug']
+body:
+    - type: markdown
+      attributes:
+          value: |
+              Thanks for taking the time to file a bug report.
+
+              Before submitting, please search existing issues:
+              - [Open issues](https://github.com/rapide-om/expo-tracelet/issues?q=is%3Aissue+is%3Aopen)
+              - [Closed issues](https://github.com/rapide-om/expo-tracelet/issues?q=is%3Aissue+is%3Aclosed)
+
+    - type: textarea
+      id: description
+      attributes:
+          label: Describe the bug
+          description: A clear and concise description of the issue.
+      validations:
+          required: true
+
+    - type: textarea
+      id: reproduction
+      attributes:
+          label: Minimal reproduction
+          description: |
+              A minimal Expo app that reproduces the issue is the fastest path to a fix. Link to a public repo, gist, or paste the relevant `app.config.js` plugin block + `Tracelet.ready()` call here.
+      validations:
+          required: true
+
+    - type: textarea
+      id: steps
+      attributes:
+          label: Steps to reproduce
+          placeholder: |
+              1. `bun add @rapide-om/expo-tracelet`
+              2. Configure plugin with '...'
+              3. Run `bun expo run:android` on Xiaomi device
+              4. Force-kill the app
+              5. See no further location updates
+      validations:
+          required: true
+
+    - type: textarea
+      id: expected
+      attributes:
+          label: Expected behavior
+      validations:
+          required: true
+
+    - type: textarea
+      id: actual
+      attributes:
+          label: Actual behavior
+          description: Include error messages and full stack traces if applicable.
+      validations:
+          required: true
+
+    - type: dropdown
+      id: platform
+      attributes:
+          label: Platform
+          multiple: true
+          options:
+              - iOS
+              - Android
+              - Both
+      validations:
+          required: true
+
+    - type: textarea
+      id: environment
+      attributes:
+          label: Environment
+          placeholder: |
+              - @rapide-om/expo-tracelet version: 0.1.0
+              - Expo SDK: 55
+              - React Native: 0.83.6
+              - Device model: Xiaomi Redmi Note 12 / iPhone 15
+              - OS version: Android 14 / iOS 17.4
+              - Tracelet SDK pinned: 1.1.4 (default)
+      validations:
+          required: true
+
+    - type: textarea
+      id: additional
+      attributes:
+          label: Additional context
+          description: Logs, screenshots, recordings, or anything else that helps.
