@@ -5,8 +5,21 @@ public class ExpoTraceletModule: Module {
 
     private let sdk = TraceletSdk.shared
 
+    // Tracks the currently-alive module instance so that the event sender
+    // closure (registered exactly once with TraceletSdk via `setEventSender`)
+    // can route events to the latest module across JS reloads. Tracelet's
+    // `setEventSender` precondition crashes if called after `ready()`, so we
+    // can't re-register on reload — instead we keep one sender forever and
+    // swap the pointer it dispatches through.
+    private static weak var current: ExpoTraceletModule?
+    private static var senderRegistered = false
+
     public func definition() -> ModuleDefinition {
         Name("ExpoTracelet")
+
+        OnCreate {
+            ExpoTraceletModule.current = self
+        }
 
         Events(
             "onLocation",
@@ -34,9 +47,18 @@ public class ExpoTraceletModule: Module {
         // ---------------------------------------------------------------
 
         AsyncFunction("ready") { (config: [String: Any]) -> [String: Any] in
-            self.sdk.setEventSender(RNTraceletEventSender { [weak self] eventName, data in
-                self?.sendEvent(eventName, data)
-            })
+            // Register the event sender exactly once per process. Tracelet's
+            // setEventSender precondition crashes if called after the SDK is
+            // ready (which happens after the first JS reload, since the
+            // singleton survives the JS context teardown). The closure
+            // dispatches through the static `current` pointer so reloads
+            // keep working.
+            if !ExpoTraceletModule.senderRegistered {
+                self.sdk.setEventSender(RNTraceletEventSender { eventName, data in
+                    ExpoTraceletModule.current?.sendEvent(eventName, data)
+                })
+                ExpoTraceletModule.senderRegistered = true
+            }
             return self.sdk.ready(config: config)
         }
 

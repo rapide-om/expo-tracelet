@@ -10,8 +10,24 @@ class ExpoTraceletModule : Module() {
         TraceletSdk.getInstance(appContext.reactContext!!.applicationContext)
     }
 
+    companion object {
+        // Tracks the currently-alive module instance so the event sender
+        // closure can route events to the latest module across JS reloads.
+        // Tracelet's TraceletSdk is a process-singleton; we want to register
+        // the sender once and have it survive React Context teardowns.
+        @Volatile
+        private var current: ExpoTraceletModule? = null
+
+        @Volatile
+        private var senderRegistered = false
+    }
+
     override fun definition() = ModuleDefinition {
         Name("ExpoTracelet")
+
+        OnCreate {
+            current = this@ExpoTraceletModule
+        }
 
         Events(
             "onLocation",
@@ -39,9 +55,16 @@ class ExpoTraceletModule : Module() {
         // ---------------------------------------------------------------
 
         AsyncFunction("ready") { config: Map<String, Any?>, promise: expo.modules.kotlin.Promise ->
-            sdk.setEventSender(RNTraceletEventSender { eventName, data ->
-                this@ExpoTraceletModule.sendEvent(eventName, data)
-            })
+            // Register the event sender exactly once per process. The closure
+            // dispatches through the static `current` pointer so reloads
+            // keep working even though the original module instance dies
+            // when the React Context is torn down.
+            if (!senderRegistered) {
+                sdk.setEventSender(RNTraceletEventSender { eventName, data ->
+                    current?.sendEvent(eventName, data)
+                })
+                senderRegistered = true
+            }
             sdk.ready(config) { state -> promise.resolve(state) }
         }
 

@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-05-08
+
+### Fixed
+
+- **iOS hard crash on JS reload / second `ready()` call.** Tracelet's iOS `setEventSender` has a `precondition(!isReady)` guard that crashes the app if called after the SDK has been initialized. Because `TraceletSdk.shared` is a process-wide singleton (and iOS keeps the process alive between launches when `stopOnTerminate: false`), the second call to `Tracking.ready()` from JS would hit that precondition. The bridge now registers the sender exactly once per process and dispatches via a static `current` pointer that's updated on each `OnCreate`.
+- **Stale module reference after JS reload (iOS + Android).** The previous closure captured `self`/`this@ExpoTraceletModule.sendEvent`, which referred to the module instance that existed at the time of `ready()`. After a Metro reload the original module is destroyed and a new one is created, but the captured reference stayed pointed at the dead instance — meaning location events were emitted by Tracelet but silently dropped because the receiver was no longer alive. The new static-current pattern keeps events flowing across reloads on both platforms.
+
 ## [0.1.1] - 2026-05-08
 
 ### Fixed
