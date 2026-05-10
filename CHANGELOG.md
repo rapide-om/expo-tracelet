@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.1.5] - 2026-05-09
+
+### Fixed
+
+- **Critical: Android `ready()` rejected with `UninitializedPropertyAccessException: lateinit property configManager has not been initialized`.** Tracelet's Android `TraceletSdk` requires an explicit `initialize()` call between `setEventSender()` and `ready()` — `initialize()` is what assigns the `lateinit` subsystems (`configManager`, `locationEngine`, `httpSyncManager`, etc.). The bridge was calling `setEventSender → ready` directly, so `ready()`'s first internal access (`configManager.setConfig(config)`) blew up. The Flutter plugin (`TraceletAndroidPlugin.onAttachedToEngine`, primary-instance branch) follows the same `setEventSender → initialize → ready` sequence; we now match it. iOS is unaffected — its `ready()` handles subsystem creation lazily.
+
 ## [0.1.4] - 2026-05-09
 
 ### Fixed

@@ -55,14 +55,28 @@ class ExpoTraceletModule : Module() {
         // ---------------------------------------------------------------
 
         AsyncFunction("ready") { config: Map<String, Any?>, promise: expo.modules.kotlin.Promise ->
-            // Register the event sender exactly once per process. The closure
-            // dispatches through the static `current` pointer so reloads
-            // keep working even though the original module instance dies
-            // when the React Context is torn down.
+            // Register the event sender + initialize the SDK exactly once per
+            // process. The closure dispatches through the static `current`
+            // pointer so reloads keep working even though the original module
+            // instance dies when the React Context is torn down.
+            //
+            // Android's TraceletSdk requires an explicit initialize() between
+            // setEventSender() and ready() — initialize() is what assigns the
+            // lateinit subsystems (configManager, locationEngine, etc.). The
+            // Flutter plugin follows the same setEventSender→initialize→ready
+            // sequence (TraceletAndroidPlugin onAttachedToEngine, primary
+            // instance branch). Skipping initialize() throws
+            // UninitializedPropertyAccessException("configManager has not
+            // been initialized") inside ready() when configManager.setConfig()
+            // is called.
+            //
+            // iOS has no analog — its ready() handles subsystem creation
+            // lazily, which is why this bug only surfaced on Android.
             if (!senderRegistered) {
                 sdk.setEventSender(RNTraceletEventSender { eventName, data ->
                     current?.sendEvent(eventName, data)
                 })
+                sdk.initialize()
                 senderRegistered = true
             }
             sdk.ready(config) { state -> promise.resolve(state) }
