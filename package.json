@@ -63,13 +63,13 @@
     "devDependencies": {
         "@eslint/js": "^10.0.1",
         "@types/react": "~19.2.10",
-        "eslint": "^9",
+        "eslint": "^10",
         "expo": "^55.0.20",
         "expo-module-scripts": "^55.0.2",
         "globals": "^17.6.0",
         "prettier": "^3.4.2",
-        "react-native": "0.83.6",
-        "typescript": "~5.9.2",
+        "react-native": "0.85.3",
+        "typescript": "~6.0.3",
         "typescript-eslint": "^8.59.2"
     },
     "peerDependencies": {
